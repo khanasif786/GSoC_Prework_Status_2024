@@ -6,4 +6,5 @@ work until now
 
 work in progress -
 
-convert the errors into roll and pitch commands to put gimbal inthe centre
+- convert the errors into roll and pitch commands to put gimbal inthe centre
+- moving the gimbal always towards the detected face video [here](https://youtu.be/tM6IkCjgkvE)
