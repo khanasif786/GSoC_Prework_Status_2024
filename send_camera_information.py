@@ -1,5 +1,7 @@
-from pymavlink import mavutil
+import threading
 import time
+from pymavlink import mavutil
+
 
 # Function to connect to MAVLink
 def connect_to_mavlink(ip, port):
@@ -16,6 +18,12 @@ def connect_to_mavlink(ip, port):
         mavlink_version=3
     )
     return connection
+
+ip = "127.0.0.1"
+port = 14560
+
+# Connect to MAVLink
+connection = connect_to_mavlink(ip, port)
 
 # Function to send the camera information message
 def send_camera_information(connection):
@@ -63,31 +71,39 @@ def handle_camera_track_point(msg):
     # Parse other necessary parameters from the msg
     print(f"Tracking point parameters: param1={param1}, param2={param2}")
 
+def send_heartbeat(connection):
+    while True:
+        connection.mav.heartbeat_send(
+            type=mavutil.mavlink.MAV_TYPE_ONBOARD_CONTROLLER,
+            autopilot=mavutil.mavlink.MAV_AUTOPILOT_INVALID,
+            base_mode=0,
+            custom_mode=0,
+            system_status=mavutil.mavlink.MAV_STATE_UNINIT,
+            mavlink_version=3
+        )
+        time.sleep(1)
+
+# Start the heartbeat thread correctly
+# heartbeat_thread = threading.Thread(target=send_heartbeat, args=(connection,))
+# heartbeat_thread.daemon = True  # Ensure the thread exits when the main program does
+# heartbeat_thread.start()
+
 # Main function
 def main():
-    ip = "127.0.0.1"
-    port = 14560
-
-    # Connect to MAVLink
-    connection = connect_to_mavlink(ip, port)
-
     # Send camera information message
     send_camera_information(connection)
-
+    print('sent CAMERA INFO')
+    
     # Start listening for MAVLink messages
     while True:
-        #send_heartbeat()
-        # print(msg)
-        #connection.target_system = 244
-        #connection.target_component = 0
         msg = connection.recv_match(type='COMMAND_LONG', blocking=True)
         if msg:
             # Check if the message is a COMMAND_LONG
-            #if "COMMAND_LONG" in msg.get_type():
-            
-            print(msg.get_type())
             if msg.get_type() == 'COMMAND_LONG' and msg.command == mavutil.mavlink.MAV_CMD_CAMERA_TRACK_POINT:
-                handle_camera_track_point(msg)
+                if msg.target_system == 245:
+                    handle_camera_track_point(msg)
+                else:
+                    print("Received but not for us")
 
 if __name__ == "__main__":
     main()
