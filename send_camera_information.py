@@ -20,7 +20,7 @@ def connect_to_mavlink(ip, port):
     return connection
 
 ip = "127.0.0.1"
-port = 14560
+port = 14570
 
 # Connect to MAVLink
 connection = connect_to_mavlink(ip, port)
@@ -82,11 +82,6 @@ def send_heartbeat(connection):
             mavlink_version=3
         )
         time.sleep(1)
-
-# Start the heartbeat thread correctly
-# heartbeat_thread = threading.Thread(target=send_heartbeat, args=(connection,))
-# heartbeat_thread.daemon = True  # Ensure the thread exits when the main program does
-# heartbeat_thread.start()
 
 # Main function
 def main():

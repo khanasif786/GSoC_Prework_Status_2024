@@ -1,7 +1,7 @@
 from pymavlink import mavutil
 
 # Connect to the drone
-connection_string = 'udp:localhost:14570'  # or '/dev/ttyAMA0', 57600 for serial connection
+connection_string = 'udp:localhost:14560'  # or '/dev/ttyAMA0', 57600 for serial connection
 master = mavutil.mavlink_connection(connection_string, source_system=244) #
 
 # Wait for the first heartbeat 
@@ -21,8 +21,8 @@ master.mav.heartbeat_send(
 )
 
 # Define the tracking point parameters
-point_x = 0.5  # Example value: center of the image (normalized 0..1, 0 is left, 1 is right)
-point_y = 0.5  # Example value: center of the image (normalized 0..1, 0 is top, 1 is bottom)
+point_x = 1  # Example value: center of the image (normalized 0..1, 0 is left, 1 is right)
+point_y = 3  # Example value: center of the image (normalized 0..1, 0 is top, 1 is bottom)
 radius = 0.1  # Example value: small radius (normalized 0..1, 0 is one pixel, 1 is full image width)
 
 # Send the MAV_CMD_CAMERA_TRACK_POINT command
